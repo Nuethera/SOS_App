@@ -17,6 +17,8 @@ import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import java.util.*
+import kotlin.concurrent.schedule
+import kotlin.concurrent.timer
 
 class MainActivity : AppCompatActivity() {
 
@@ -49,14 +51,21 @@ class MainActivity : AppCompatActivity() {
         lateinit var address: String
         lateinit var latitudee: String
         lateinit var longitudee: String
+        val iAction = intent.action.toString()
+
+        val sharedPref = getSharedPreferences("shared", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+
+
+
 
 
 
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
                 val geocoder = Geocoder(this, Locale.getDefault())
-                latitudee=location!!.latitude.toString()
-                longitudee=location.longitude.toString()
+                latitudee = location!!.latitude.toString()
+                longitudee = location.longitude.toString()
                 val addresses = geocoder.getFromLocation(
                     location!!.latitude,
                     location.longitude,
@@ -64,10 +73,19 @@ class MainActivity : AppCompatActivity() {
                 )
 
                 address = addresses[0].getAddressLine(0)
+                editor.putString("address", address)
+                editor.putString("longitude", longitudee)
+                editor.putString("latitude", latitudee)
+                editor.apply()
             }
+        address = sharedPref.getString("address", "null").toString()
+        longitudee = sharedPref.getString("longitude", "null").toString()
+        latitudee = sharedPref.getString("latitude", "null").toString()
+        val smsManager: SmsManager = SmsManager.getDefault()
 
-        val sharedPref = getSharedPreferences("shared", Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
+
+
+
 
         SavePh.setOnClickListener {
             editor.putString("PhoneNO1.", PhoneNO1.text.toString())
@@ -93,7 +111,7 @@ class MainActivity : AppCompatActivity() {
         send.setOnClickListener {
             //send message
             try {
-                val smsManager: SmsManager = SmsManager.getDefault()
+               // val smsManager: SmsManager = SmsManager.getDefault()
                 smsManager.sendTextMessage(
                     Phnview1.text.toString(),
                     null,
@@ -122,6 +140,40 @@ class MainActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 Toast.makeText(applicationContext, "Grant Permission", Toast.LENGTH_LONG).show()
             }
+        }
+        if (iAction != "android.intent.action.MAIN") {
+
+            try {
+
+                smsManager.sendTextMessage(
+                    Phnview1.text.toString(),
+                    null,
+                    MessageView.text.toString() + "--  \n" + address + "  \n  " + latitudee + "  \n  " + longitudee,
+                    null,
+                    null
+                )
+                //val smsManager: SmsManager = SmsManager.getDefault()
+                smsManager.sendTextMessage(
+                    Phnview2.text.toString(),
+                    null,
+                    MessageView.text.toString() + "--  \n" + address + "  \n  " + latitudee + "  \n  " + longitudee,
+                    null,
+                    null
+                )
+                //val smsManager: SmsManager = SmsManager.getDefault()
+                smsManager.sendTextMessage(
+                    Phnview3.text.toString(),
+                    null,
+                    MessageView.text.toString() + "--  \n" + address + "  \n  " + latitudee + "  \n  " + longitudee,
+                    null,
+                    null
+                )
+
+                Toast.makeText(applicationContext, "Messages Sent", Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                Toast.makeText(applicationContext, e.message, Toast.LENGTH_LONG).show()
+            }
+
         }
 
     }
