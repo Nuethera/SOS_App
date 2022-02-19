@@ -1,14 +1,19 @@
 package com.example.onetapsos
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.telephony.SmsManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import java.util.*
@@ -22,6 +27,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        val permissions = arrayOf(
+            Manifest.permission.SEND_SMS,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+        checkPermission(permissions, 1)
+
         val PhoneNO1 = findViewById<EditText>(R.id.editTextPhone)
         val SavePh = findViewById<Button>(R.id.button1)
         val Phnview1 = findViewById<TextView>(R.id.textBox)
@@ -77,6 +90,58 @@ class MainActivity : AppCompatActivity() {
         }
         MessageView.text = sharedPref.getString("Message", "Help me please")
 
+        send.setOnClickListener {
+            //send message
+            try {
+                val smsManager: SmsManager = SmsManager.getDefault()
+                smsManager.sendTextMessage(
+                    Phnview1.text.toString(),
+                    null,
+                    MessageView.text.toString() + "--  \n" + address+"  \n  "+latitudee+"  \n  "+longitudee,
+                    null,
+                    null
+                )
+                //val smsManager: SmsManager = SmsManager.getDefault()
+                smsManager.sendTextMessage(
+                    Phnview2.text.toString(),
+                    null,
+                    MessageView.text.toString() + "--  \n" + address+"  \n  "+latitudee+"  \n  "+longitudee,
+                    null,
+                    null
+                )
+                //val smsManager: SmsManager = SmsManager.getDefault()
+                smsManager.sendTextMessage(
+                    Phnview3.text.toString(),
+                    null,
+                    MessageView.text.toString() + "--  \n" + address+"  \n  "+latitudee+"  \n  "+longitudee,
+                    null,
+                    null
+                )
+
+                Toast.makeText(applicationContext, "Message Sent", Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                Toast.makeText(applicationContext, "Grant Permission", Toast.LENGTH_LONG).show()
+            }
+        }
 
     }
+
+    private fun checkPermission(permissions: Array<String>, requestCode: Int) {
+        ActivityCompat.requestPermissions(this, permissions, requestCode)
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            //Toast.makeText(this, "SMS Permission Granted", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "SMS Permission Denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 }
