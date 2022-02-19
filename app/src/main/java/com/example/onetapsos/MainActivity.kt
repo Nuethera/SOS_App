@@ -41,6 +41,13 @@ class MainActivity : AppCompatActivity() {
         Phnview2.text = sharedPref.getString("PhoneNO2.", "100")
         Phnview3.text = sharedPref.getString("PhoneNO3.", "101")
 
+        SaveMes.setOnClickListener {
+            editor.putString("Message", MessageEdit.text.toString())
+            editor.apply()
+            MessageView.text = sharedPref.getString("Message", "Help me please")
+        }
+        MessageView.text = sharedPref.getString("Message", "Help me please")
+
 
     }
 }
