@@ -6,9 +6,11 @@ import android.location.Geocoder
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.telephony.SmsManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import java.util.*
@@ -77,6 +79,40 @@ class MainActivity : AppCompatActivity() {
         }
         MessageView.text = sharedPref.getString("Message", "Help me please")
 
+        send.setOnClickListener {
+            //send message
+            try {
+                val smsManager: SmsManager = SmsManager.getDefault()
+                smsManager.sendTextMessage(
+                    Phnview1.text.toString(),
+                    null,
+                    MessageView.text.toString() + "--  \n" + address+"  \n  "+latitudee+"  \n  "+longitudee,
+                    null,
+                    null
+                )
+                //val smsManager: SmsManager = SmsManager.getDefault()
+                smsManager.sendTextMessage(
+                    Phnview2.text.toString(),
+                    null,
+                    MessageView.text.toString() + "--  \n" + address+"  \n  "+latitudee+"  \n  "+longitudee,
+                    null,
+                    null
+                )
+                //val smsManager: SmsManager = SmsManager.getDefault()
+                smsManager.sendTextMessage(
+                    Phnview3.text.toString(),
+                    null,
+                    MessageView.text.toString() + "--  \n" + address+"  \n  "+latitudee+"  \n  "+longitudee,
+                    null,
+                    null
+                )
+
+                Toast.makeText(applicationContext, "Message Sent", Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                Toast.makeText(applicationContext, "Grant Permission", Toast.LENGTH_LONG).show()
+            }
+        }
 
     }
+
 }
