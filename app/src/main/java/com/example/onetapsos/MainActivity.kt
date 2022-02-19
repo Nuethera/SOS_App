@@ -1,5 +1,6 @@
 package com.example.onetapsos
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -23,6 +24,22 @@ class MainActivity : AppCompatActivity() {
         val PhoneNO2 = findViewById<EditText>(R.id.editTextPhone2)
         val PhoneNO3 = findViewById<EditText>(R.id.editTextPhone3)
 
+        val sharedPref = getSharedPreferences("shared", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+
+        SavePh.setOnClickListener {
+            editor.putString("PhoneNO1.", PhoneNO1.text.toString())
+            editor.putString("PhoneNO2.", PhoneNO2.text.toString())
+            editor.putString("PhoneNO3.", PhoneNO3.text.toString())
+            editor.apply();
+
+            Phnview1.text = sharedPref.getString("PhoneNO1.", "1091")
+            Phnview2.text = sharedPref.getString("PhoneNO2.", "100")
+            Phnview3.text = sharedPref.getString("PhoneNO3.", "101")
+        }
+        Phnview1.text = sharedPref.getString("PhoneNO1.", "1091")
+        Phnview2.text = sharedPref.getString("PhoneNO2.", "100")
+        Phnview3.text = sharedPref.getString("PhoneNO3.", "101")
 
 
     }
