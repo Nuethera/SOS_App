@@ -1,17 +1,27 @@
 package com.example.onetapsos
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Geocoder
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         val PhoneNO1 = findViewById<EditText>(R.id.editTextPhone)
         val SavePh = findViewById<Button>(R.id.button1)
         val Phnview1 = findViewById<TextView>(R.id.textBox)
@@ -23,6 +33,25 @@ class MainActivity : AppCompatActivity() {
         val Phnview3 = findViewById<TextView>(R.id.phoneview3)
         val PhoneNO2 = findViewById<EditText>(R.id.editTextPhone2)
         val PhoneNO3 = findViewById<EditText>(R.id.editTextPhone3)
+        lateinit var address: String
+        lateinit var latitudee: String
+        lateinit var longitudee: String
+
+
+
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                val geocoder = Geocoder(this, Locale.getDefault())
+                latitudee=location!!.latitude.toString()
+                longitudee=location.longitude.toString()
+                val addresses = geocoder.getFromLocation(
+                    location!!.latitude,
+                    location.longitude,
+                    1
+                )
+
+                address = addresses[0].getAddressLine(0)
+            }
 
         val sharedPref = getSharedPreferences("shared", Context.MODE_PRIVATE)
         val editor = sharedPref.edit()
